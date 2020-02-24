@@ -8,22 +8,21 @@
   <button mat-raised-button color="primary" (click)="readLink(link.value)">Read link</button>
   <div class="container">
     <div class="title">
-      {{(rssData | async)?.language}}
       <img src="{{(rssData | async)?.image.url}}" alt="{{(rssData | async)?.image.title}}"
         width="{{(rssData | async)?.image.width}}" height="{{(rssData | async)?.image.height}}">
       <h1>{{(rssData | async)?.title}}</h1>
     </div>
-    <h2 class="description">{{(rssData | async)?.description}}</h2>
-    <div class="news">
-      <h3>{{(rssData | async)?.item[0].title}}</h3>
-      <span>{{(rssData | async)?.item[0].category}}</span>
-      <div>
-        <a class="news-link">{{(rssData | async)?.item[0].link}}</a>
-      </div>
-      <span class="time">{{(rssData | async)?.item[0].pubDate}}</span>
-      <br>
-      <br>
-       <br>
-      <img *ngIf="newsImgUrl" src="{{newsImgUrl | async}}" alt="">
+    <div class="container" *ngFor="let item of newsArray | async">
+      <div class="news">
+        <h2 class="description">{{item.title}}</h2>
+        <div>
+          <a class="link" href="{{item.link}}">{{item.link}}</a>
+        </div>
+        <span class="time">{{item.pubDate}}</span>
+        <br>
+        <br>
+        <br>
+        <img *ngIf="item" src="{{item.enclosure['@attributes'].url}}" alt="">
+    </div>
   </div>
 </div>

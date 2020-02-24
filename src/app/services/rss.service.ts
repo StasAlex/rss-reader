@@ -16,18 +16,26 @@ export class RssService {
     private ngxXml2jsonService: NgxXml2jsonService
   ) {}
 
+  getNewsArray(url: string) {
+    return this.http.get(this.proxyurl + url, { responseType: 'text' }).pipe(
+      map(data => this.parser.parseFromString(data, 'text/xml')),
+      map(doc => this.ngxXml2jsonService.xmlToJson(doc)),
+      pluck('rss'),
+      pluck('channel'),
+      pluck('item')
+    );
+  }
+
   getUrl(url: string) {
-    return (
-      this.http
-        .get(this.proxyurl + url, { responseType: 'text' })
-        .pipe(
-          map((data: string) => this.parser.parseFromString(data, 'text/xml')),
-          map(doc => this.ngxXml2jsonService.xmlToJson(doc)),
-          pluck('rss'),
-          pluck('channel'),
-          pluck('item'),
-          map(data => data[0].enclosure['@attributes'].url)
-        )
+    return this.http
+    .get(this.proxyurl + url, { responseType: 'text' })
+    .pipe(
+      map(data => this.parser.parseFromString(data, 'text/xml')),
+      map(doc => this.ngxXml2jsonService.xmlToJson(doc)),
+      pluck('rss'),
+      pluck('channel'),
+      pluck('item'),
+      map(data => data[0].enclosure['@attributes'].url)
     );
   }
 
@@ -35,12 +43,11 @@ export class RssService {
     if (!url) {
       alert('Введите адрес новостной ленты');
     } else {
-    return this.http.get(this.proxyurl + url, { responseType: 'text' })
-    .pipe(
-      map((data: string) => this.parser.parseFromString(data, 'text/xml')),
-      map(doc => this.ngxXml2jsonService.xmlToJson(doc)),
-      pluck('rss'),
-      pluck('channel')
+      return this.http.get(this.proxyurl + url, { responseType: 'text' }).pipe(
+        map((data: string) => this.parser.parseFromString(data, 'text/xml')),
+        map(doc => this.ngxXml2jsonService.xmlToJson(doc)),
+        pluck('rss'),
+        pluck('channel')
       );
     }
   }
